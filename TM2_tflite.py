@@ -11,6 +11,7 @@ import cv2
 
 from PIL import Image
 from tflite_runtime.interpreter import Interpreter
+from line import line_bot
 
 def load_labels(path):
   with open(path, 'r') as f:
@@ -61,10 +62,15 @@ def main():
   #擷取畫面 寬度 設定為512
   cap.set(cv2.CAP_PROP_FRAME_WIDTH,640)
   #擷取畫面 高度 設定為512
+
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
   key_detect = 0
   times=1
+  old_labels = ""
+  frame_count = 0
+  diff_frame_count = 0
+
   while (key_detect==0):
     ret,image_src =cap.read()
 
@@ -74,10 +80,27 @@ def main():
     results = classify_image(interpreter, image)
     elapsed_ms = (time.time() - start_time) * 1000
     label_id, prob = results[0]
+    
 
-    print(labels[label_id])
+    if frame_count == 0:
+        old_labels = labels[label_id]
+    
+    if old_labels != labels[label_id]:
+        diff_frame_count = diff_frame_count+1
 
-    cv2.imshow('Detecting....',image_src)
+    else:
+        diff_frame_count = 0
+    
+    if diff_frame_count>=10:
+        line_bot("this is "+ labels[label_id])
+        old_labels = labels[label_id]
+        diff_frame_count = 0
+        
+    frame_count = frame_count + 1
+
+    print("diff_frame_count:"+str(diff_frame_count) +" tensor id:" + labels[label_id] + " and old id: " + str(old_labels))
+
+    # cv2.imshow('Detecting....',image_src)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
       key_detect = 1
