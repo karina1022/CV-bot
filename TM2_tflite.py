@@ -2,14 +2,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import sys
+sys.path.append("/usr/lib/python3/dist-packages")
+
 import argparse
 import io
 import time
 import numpy as np
-#import picamera
 import cv2
 
 from PIL import Image
+
 from tflite_runtime.interpreter import Interpreter
 from line import line_bot
 
@@ -17,12 +20,10 @@ def load_labels(path):
   with open(path, 'r') as f:
     return {i: line.strip() for i, line in enumerate(f.readlines())}
 
-
 def set_input_tensor(interpreter, image):
   tensor_index = interpreter.get_input_details()[0]['index']
   input_tensor = interpreter.tensor(tensor_index)()[0]
   input_tensor[:, :] = image
-
 
 def classify_image(interpreter, image, top_k=1):
   """Returns a sorted array of classification results."""
@@ -39,7 +40,6 @@ def classify_image(interpreter, image, top_k=1):
   ordered = np.argpartition(-output, top_k)
   return [(i, output[i]) for i in ordered[:top_k]]
 
-
 def main():
   parser = argparse.ArgumentParser(
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -54,9 +54,6 @@ def main():
   interpreter = Interpreter(args.model)
   interpreter.allocate_tensors()
   _, height, width, _ = interpreter.get_input_details()[0]['shape']
-
-  #with picamera.PiCamera(resolution=(640, 480), framerate=30) as camera:
-    #camera.start_preview()
 
   cap = cv2.VideoCapture(0)
   #擷取畫面 寬度 設定為512
@@ -100,13 +97,7 @@ def main():
 
     print("diff_frame_count:"+str(diff_frame_count) +" tensor id:" + labels[label_id] + " and old id: " + str(old_labels))
 
-    # cv2.imshow('Detecting....',image_src)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-      key_detect = 1
-
   cap.release()
-  cv2.destroyAllWindows()
 
 if __name__ == '__main__':
   main()
