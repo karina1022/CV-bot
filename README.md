@@ -1,12 +1,12 @@
 # Security Bot
 
-##Hardware environment
+## Hardware environment
 
-##Software environment
+## Software environment
 
-##Deploy
+## Deploy
 
-##Run
+## Run
 
 
 
