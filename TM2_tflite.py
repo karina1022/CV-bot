@@ -95,7 +95,7 @@ def main():
         
     frame_count = frame_count + 1
 
-    print("diff_frame_count:"+str(diff_frame_count) +" tensor id:" + labels[label_id] + " and old id: " + str(old_labels))
+    print("diff_frame_count:" + str(diff_frame_count) + " tensor id:" + labels[label_id] + " and old id: " + str(old_labels))
 
   cap.release()
 
