@@ -2,6 +2,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import sys
+sys.path.append("/usr/lib/python3/dist-packages")
+
 import argparse
 import io
 import time
@@ -39,7 +42,7 @@ def classify_image(interpreter, image, top_k=1):
   ordered = np.argpartition(-output, top_k)
   return [(i, output[i]) for i in ordered[:top_k]]
 
-
+    
 def main():
   parser = argparse.ArgumentParser(
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -65,13 +68,13 @@ def main():
 
   cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-  key_detect = 0
+  
   times=1
   old_labels = ""
   frame_count = 0
   diff_frame_count = 0
 
-  while (key_detect==0):
+  while True:
     ret,image_src =cap.read()
 
     image=cv2.resize(image_src,(224,224))
@@ -100,13 +103,7 @@ def main():
 
     print("diff_frame_count:"+str(diff_frame_count) +" tensor id:" + labels[label_id] + " and old id: " + str(old_labels))
 
-    # cv2.imshow('Detecting....',image_src)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-      key_detect = 1
-
   cap.release()
-  cv2.destroyAllWindows()
 
 if __name__ == '__main__':
   main()
