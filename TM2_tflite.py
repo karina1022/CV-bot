@@ -12,6 +12,7 @@ import cv2
 from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 from line import line_bot
+from config import *
 
 def load_labels(path):
   with open(path, 'r') as f:
@@ -91,7 +92,7 @@ def main():
     else:
         diff_frame_count = 0
     
-    if diff_frame_count>=10:
+    if diff_frame_count>=THRESHOLD:
         line_bot("this is "+ labels[label_id])
         old_labels = labels[label_id]
         diff_frame_count = 0
