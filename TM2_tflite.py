@@ -5,7 +5,6 @@ from __future__ import print_function
 import sys
 sys.path.append("/usr/lib/python3/dist-packages")
 
-import argparse
 import io
 import time
 import numpy as np
@@ -16,11 +15,7 @@ from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 from line import line_bot
 from config import *
-
-def load_labels(path):
-  with open(path, 'r') as f:
-    return {i: line.strip() for i, line in enumerate(f.readlines())}
-
+from args import load_args
 
 def set_input_tensor(interpreter, image):
   tensor_index = interpreter.get_input_details()[0]['index']
@@ -45,16 +40,7 @@ def classify_image(interpreter, image, top_k=1):
 
     
 def main():
-  parser = argparse.ArgumentParser(
-      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-  parser.add_argument(
-      '--model', help='File path of .tflite file.', required=True)
-  parser.add_argument(
-      '--labels', help='File path of labels file.', required=True)
-  args = parser.parse_args()
-
-  labels = load_labels(args.labels)
-
+  args, labels = load_args()
   interpreter = Interpreter(args.model)
   interpreter.allocate_tensors()
   _, height, width, _ = interpreter.get_input_details()[0]['shape']
