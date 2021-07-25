@@ -1,4 +1,4 @@
-ifrom linebot import LineBotApi
+from linebot import LineBotApi
 from linebot.models import TextSendMessage
 
 CHANNEL_ACCESS_TOKEN = ""
