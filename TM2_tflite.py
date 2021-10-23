@@ -9,13 +9,13 @@ import io
 import time
 import numpy as np
 #import picamera
-import cv2
 
 from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 from line import line_bot
 from config import *
 from args import load_args
+from OpenCV import *
 
 def set_input_tensor(interpreter, image):
   tensor_index = interpreter.get_input_details()[0]['index']
@@ -47,14 +47,8 @@ def main():
 
   #with picamera.PiCamera(resolution=(640, 480), framerate=30) as camera:
     #camera.start_preview()
-
-  cap = cv2.VideoCapture(0)
-  #擷取畫面 寬度 設定為512
-  cap.set(cv2.CAP_PROP_FRAME_WIDTH,640)
-  #擷取畫面 高度 設定為512
-
-  cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
+  
+  cap = set_cap()
   
   times=1
   old_labels = ""
@@ -62,9 +56,8 @@ def main():
   diff_frame_count = 0
 
   while True:
-    ret,image_src =cap.read()
-
-    image=cv2.resize(image_src,(224,224))
+    
+    image = read_cap(cap)
 
     start_time = time.time()
     results = classify_image(interpreter, image)
@@ -90,7 +83,6 @@ def main():
 
     print("diff_frame_count:"+str(diff_frame_count) +" tensor id:" + labels[label_id] + " and old id: " + str(old_labels))
 
-  cap.release()
-
+  close_cap()
 if __name__ == '__main__':
   main()
